@@ -1,0 +1,28 @@
+(= stdlib (cdll "/usr/local/musl/lib/libc.so"
+    "/usr/local/musl/include/unistd.h"
+    "/usr/local/musl/include/stdlib.h"
+    ))
+
+(= lib (cdll "libSDL.so"
+    "/usr/include/SDL/SDL.h"
+    ))
+
+(def main ()
+    (stdlib.write stdlib.STDOUT_FILENO "hello" 5)
+    (lib.SDL_Init lib.SDL_INIT_VIDEO)
+
+    (= event (lib.SDL_Event))
+
+    (lib.SDL_SetVideoMode 640 480 0 0)
+
+    (= running true)
+    (while running
+        (while (!= 0 (lib.SDL_PollEvent (byref event)))
+            (if (== lib.SDL_QUIT event.type)
+                (= running false))
+        )
+    )
+    (stdlib.exit 0)
+)
+
+(main)
